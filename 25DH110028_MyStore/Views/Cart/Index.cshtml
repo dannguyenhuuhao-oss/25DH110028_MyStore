@@ -108,7 +108,7 @@
                 }
             </div>
 
-            <!-- CỘT BÊN PHẢI: Khung cộng giỏ hàng & nút Tiến hành đặt hàng -->
+            <!-- CỘT BÊN PHẢI: Khung cộng giỏ hàng & các nút hành động -->
             <div class="od-summary">
                 <div class="od-card">
                     <h3 style="border-bottom: 1px solid #f0ece0; padding-bottom: 10px; margin-bottom: 12px;">Cộng giỏ hàng</h3>
@@ -125,8 +125,13 @@
                         <span>@Model.TotalValue().ToString("N0") đ</span>
                     </div>
 
-                    <!-- Nút Mua hàng chuẩn giao diện hệ thống màu Sky -->
-                    <a href="@Url.Action("Checkout", "Order")" class="od-btn">Tiến hành đặt hàng</a>
+                    <!-- Nút Tiến hành đặt hàng -->
+                    <a href="@Url.Action("Checkout", "Order")" class="od-btn" style="display: block; text-align: center; margin-bottom: 10px; text-decoration: none;">Tiến hành đặt hàng</a>
+
+                    <!-- Nút Tiếp tục mua hàng -->
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary" style="display: block; text-align: center; padding: 10px; border: 1px solid #ccc; border-radius: 4px; color: #333; text-decoration: none; font-weight: 600;">
+                        &larr; Tiếp tục mua hàng
+                    </a>
                 </div>
             </div>
         </div>
