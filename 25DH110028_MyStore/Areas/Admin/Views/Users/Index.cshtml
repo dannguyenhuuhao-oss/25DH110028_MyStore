@@ -24,10 +24,10 @@
             <td>@Html.DisplayFor(modelItem => item.Username)</td>
             <td>@Html.DisplayFor(modelItem => item.UserRole)</td>
             <td>
-                <!-- Dùng tham số username để tự động chuyển thành dạng ?username=... trên URL -->
+                <!-- Sửa các nút Sửa, Chi tiết, Xóa thành dạng truyền tham số QueryString -->
                 <a href="@Url.Action("Edit", "Users", new { username = item.Username })" class="btn btn-primary btn-sm">Sửa</a>
                 <a href="@Url.Action("Details", "Users", new { username = item.Username })" class="btn btn-info btn-sm">Chi tiết</a>
-                <a href="@Url.Action("Delete", "Users", new { username = item.Username })" class="btn btn-danger btn-sm">Xóa</a>
+                <a href="@Url.Action("Delete", "Users", new { username = item.Username })" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa tài khoản này?');">Xóa</a>
             </td>
         </tr>
     }

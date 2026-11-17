@@ -6,46 +6,100 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2 class="bg-success text-center" style="padding: 10px;">QUẢN LÝ DANH SÁCH ĐƠN HÀNG</h2>
+<!-- Tiêu đề trang đồng bộ màu Navy -->
+<h2 style="background: linear-gradient(135deg, #1f3a4d 0%, #2b4f68 100%); color: #efead8; padding: 15px 20px; border-radius: 8px; text-align: center; font-weight: 700; margin-bottom: 20px; box-shadow: 0 3px 10px rgba(31, 58, 77, 0.15);">
+    QUẢN LÝ DANH SÁCH ĐƠN HÀNG
+</h2>
 
+<!-- Thông báo thành công / lỗi nếu có -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" style="border-radius: 6px;">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" style="border-radius: 6px;">@TempData["ErrorMessage"]</div>
+}
+
+<!-- Form tìm kiếm -->
 @using (Html.BeginForm("Index", "Orders", FormMethod.Get))
 {
-    <div class="row" style="margin-bottom: 15px;">
+    <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-4">
-            <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Tìm theo mã đơn, tên khách..." />
+            <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Tìm theo mã đơn, tên khách, trạng thái..." style="border-radius: 6px;" />
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #3e8fb0; border-color: #3e8fb0; border-radius: 6px; font-weight: 600;">Tìm kiếm</button>
         </div>
     </div>
 }
 
-<table class="table table-bordered table-striped">
-    <tr>
-        <th class="bg-success">Mã đơn</th>
-        <th class="bg-success">Khách hàng</th>
-        <th class="bg-success">Ngày đặt</th>
-        <th class="bg-success">Tổng tiền</th>
-        <th class="bg-success">Trạng thái</th>
-        <th class="bg-success">Thao tác</th>
-    </tr>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped" style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e3dcc8;">
+        <thead>
+            <tr style="background-color: #1f3a4d; color: #efead8;">
+                <th style="padding: 12px 15px; border: none;">Mã đơn</th>
+                <th style="padding: 12px 15px; border: none;">Khách hàng</th>
+                <th style="padding: 12px 15px; border: none;">Ngày đặt</th>
+                <th style="padding: 12px 15px; border: none;">Tổng tiền</th>
+                <th style="padding: 12px 15px; border: none; min-width: 180px;">Trạng thái</th>
+                <th style="padding: 12px 15px; border: none; text-align: center; min-width: 220px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="vertical-align: middle;"><strong>#@item.OrderID</strong></td>
+                        <td style="vertical-align: middle;">@(item.Customer != null ? item.Customer.CustomerName : "N/A")</td>
+                        <td style="vertical-align: middle;">@item.OrderDate</td>
+                        <td style="vertical-align: middle; color: #b5382e; font-weight: bold;">@item.TotalAmount.ToString("N0") đ</td>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>#@item.OrderID</td>
-            <td>@(item.Customer != null ? item.Customer.CustomerName : "N/A")</td>
-            <td>@item.OrderDate</td>
-            <td>@item.TotalAmount.ToString("N0") đ</td>
-            <td>@item.PaymentStatus</td>
-            <td>
-                @Html.ActionLink("Xem chi tiết", "Details", new { id = item.OrderID }, new { @class = "btn btn-info btn-sm" })
-            </td>
-        </tr>
-    }
-</table>
+                        <!-- Cột Trạng thái & Form cập nhật nhanh -->
+                        <td style="vertical-align: middle;">
+                            @using (Html.BeginForm("ConfirmOrder", "Orders", new { area = "Admin" }, FormMethod.Post, new { @class = "form-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("id", item.OrderID)
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <select name="paymentStatus" class="form-control input-sm" style="font-size: 12px; height: 32px; border-radius: 4px;">
+                                        <option value="Chưa thanh toán" @(item.PaymentStatus == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
+                                        <option value="Thanh toán tiền mặt" @(item.PaymentStatus == "Thanh toán tiền mặt" ? "selected" : "")>Thanh toán tiền mặt</option>
+                                        <option value="Thanh toán paypal" @(item.PaymentStatus == "Thanh toán paypal" ? "selected" : "")>Thanh toán paypal</option>
+                                        <option value="Trả góp" @(item.PaymentStatus == "Trả góp" ? "selected" : "")>Trả góp</option>
+                                        <option value="Đã xác nhận" @(item.PaymentStatus == "Đã xác nhận" ? "selected" : "")>Đã xác nhận</option>
+                                        <option value="Đang giao hàng" @(item.PaymentStatus == "Đang giao hàng" ? "selected" : "")>Đang giao hàng</option>
+                                        <option value="Đã hoàn thành" @(item.PaymentStatus == "Đã hoàn thành" ? "selected" : "")>Đã hoàn thành</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-success btn-xs" style="background-color: #3e8fb0; border: none; padding: 6px 10px; border-radius: 4px;" title="Lưu trạng thái">Lưu</button>
+                                </div>
+                            }
+                        </td>
 
-<div class="text-center">
+                        <!-- Cột Thao tác (Xem chi tiết & Xóa) -->
+                        <td style="vertical-align: middle; text-align: center;">
+                            <a href="@Url.Action("Details", "Orders", new { id = item.OrderID })" class="btn btn-info btn-sm" style="background-color: #3e8fb0; border: none; border-radius: 4px; padding: 5px 10px;">Chi tiết</a>
+                            <a href="@Url.Action("Delete", "Orders", new { id = item.OrderID })" class="btn btn-danger btn-sm" style="border-radius: 4px; padding: 5px 10px;" onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng #@item.OrderID này không?');">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center" style="padding: 20px; color: #666;">Không tìm thấy đơn hàng nào.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Phân trang -->
+<div class="text-center" style="margin-top: 20px;">
     Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchTerm = ViewBag.SearchTerm }))
+    <div style="margin-top: 10px;">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchTerm = ViewBag.SearchTerm }))
+    </div>
 </div>

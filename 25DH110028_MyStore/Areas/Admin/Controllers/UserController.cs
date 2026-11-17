@@ -105,7 +105,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             return View(result);
         }
 
-        // GET: Admin/Users/Details/duy123
+        // GET: Admin/Users/Details?username=...
         public ActionResult Details(string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -113,6 +113,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            username = HttpUtility.UrlDecode(username);
             User user = db.Users.Find(username);
 
             if (user == null)
@@ -139,8 +140,6 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             {
                 try
                 {
-                    user.Username = user.Username.Trim();
-                    user.UserRole = user.UserRole.Trim();
                     if (user == null ||
                         string.IsNullOrWhiteSpace(user.Username) ||
                         string.IsNullOrWhiteSpace(user.Password) ||
@@ -200,7 +199,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             return View(user);
         }
 
-        // GET: Admin/Users/Edit/duy123
+        // GET: Admin/Users/Edit?username=...
         public ActionResult Edit(string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -208,6 +207,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            username = HttpUtility.UrlDecode(username);
             User user = db.Users.Find(username);
 
             if (user == null)
@@ -218,7 +218,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             return View(user);
         }
 
-        // POST: Admin/Users/Edit/duy123
+        // POST: Admin/Users/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
@@ -275,7 +275,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             return View(user);
         }
 
-        // GET: Admin/Users/Delete/duy123
+        // GET: Admin/Users/Delete?username=...
         public ActionResult Delete(string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -283,6 +283,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            username = HttpUtility.UrlDecode(username);
             User user = db.Users.Find(username);
 
             if (user == null)
@@ -298,14 +299,16 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             return View(user);
         }
 
-        // POST: Admin/Users/Delete/duy123
+        // POST: Admin/Users/Delete?username=...
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string username)
         {
+            username = HttpUtility.UrlDecode(username);
+
             try
             {
-                User user = db.Users.Find(id);
+                User user = db.Users.Find(username);
 
                 if (user == null)
                 {
@@ -313,7 +316,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
                 }
 
                 // Kiểm tra liên kết với bảng Customer
-                int customerCount = db.Customers.Count(c => c.Username == id);
+                int customerCount = db.Customers.Count(c => c.Username == username);
 
                 ViewBag.CustomerCount = customerCount;
 
@@ -338,14 +341,14 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                User user = db.Users.Find(id);
+                User user = db.Users.Find(username);
 
                 if (user == null)
                 {
                     return HttpNotFound();
                 }
 
-                ViewBag.CustomerCount = db.Customers.Count(c => c.Username == id);
+                ViewBag.CustomerCount = db.Customers.Count(c => c.Username == username);
 
                 ViewBag.DeleteError =
                     "Không thể xóa tài khoản: " +
