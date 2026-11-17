@@ -1,0 +1,23 @@
+﻿
+@model IEnumerable<_25DH110028_MyStore.Models.Product>
+
+<table class="table">
+    <thead>
+        <tr><th>Ảnh</th><th>Tên sản phẩm</th><th>Danh mục</th><th>Giá</th><th>Tồn</th><th>Đã bán</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td><img src="@p.ProductImage" style="max-height:50px;" /></td>
+                <td>@p.ProductName</td>
+                <td>@p.Category.CategoryName</td>
+                <td>@p.ProductPrice.ToString("N0")</td>
+                <td>@p.Quantity</td>
+                <td>@p.SoldQuantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (!Model.Any())
+{<p>Không có sản phẩm nào.</p>}

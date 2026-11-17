@@ -1,0 +1,58 @@
+﻿@model PagedList.IPagedList<_25DH110028_MyStore.Models.Product>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = ViewBag.CategoryName ?? "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="container" style="padding-top: 30px; min-height: 500px;">
+    <h2 style="color: #0d424b; font-weight: bold; margin-bottom: 25px; border-bottom: 2px solid #1b7b8a; padding-bottom: 10px;">
+        Danh mục: @ViewBag.CategoryName
+    </h2>
+
+    <div class="row">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="col-md-12 text-center" style="padding: 40px;">
+                <p class="text-muted" style="font-size: 16px;">Chưa có sản phẩm nào trong danh mục này.</p>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-md-3" style="margin-bottom: 25px;">
+                    <div class="thumbnail" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.3s; padding: 10px;">
+
+                        <!-- KIỂM TRA ĐƯỜNG DẪN ẢNH: Link ngoài hoặc Thư mục nội bộ -->
+                        @{
+                            string imgPath = item.ProductImage;
+                            if (!string.IsNullOrEmpty(imgPath) && (imgPath.StartsWith("http://") || imgPath.StartsWith("https://")))
+                            {
+                                <img src="@imgPath" alt="@item.ProductName" style="height: 200px; width: 100%; object-fit: cover; border-radius: 4px;" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/@imgPath" alt="@item.ProductName" style="height: 200px; width: 100%; object-fit: cover; border-radius: 4px;" />
+                            }
+                        }
+
+                        <div class="caption">
+                            <h4 style="font-weight: bold; font-size: 15px; height: 40px; overflow: hidden; text-overflow: ellipsis;">@item.ProductName</h4>
+                            <p style="color: #d9534f; font-weight: bold; font-size: 16px;">@string.Format("{0:N0} đ", item.ProductPrice)</p>
+                            <p>
+                                <a href="@Url.Action("ProductDetails", "Home", new { id = item.ProductID })" class="btn btn-block" style="background-color: #1b7b8a; color: #fff; border-radius: 20px;">Chi tiết</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Phân trang -->
+    <div class="text-center" style="margin-top: 20px;">
+        @Html.PagedListPager(Model, page => Url.Action("ProductList", new { id = ViewBag.CategoryID, page }))
+    </div>
+</div>

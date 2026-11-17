@@ -1,0 +1,15 @@
+﻿
+@model IEnumerable<_25DH110028_MyStore.Models.Category>
+
+@if (Model.Any())
+{
+    <section class="cate-tiles">
+        @foreach (var c in Model)
+        {
+            <a class="cate-tile" href="@Url.Action("ProductList", "Home", new { id = c.CategoryID, area = "" })">
+                <span>@((c.CategoryName ?? "?").Substring(0, 1).ToUpper())</span>
+                @c.CategoryName
+            </a>
+        }
+    </section>
+}

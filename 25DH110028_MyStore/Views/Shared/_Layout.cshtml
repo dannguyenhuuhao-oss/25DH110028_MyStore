@@ -1,34 +1,117 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+
+            .pagination li a,
+            .pagination li span {
+                display: block;
+                padding: 8px 14px;
+                border: 1px solid #0d6efd;
+                border-radius: 5px;
+                text-decoration: none;
+                color: #0d6efd;
+            }
+
+            .pagination li.active span {
+                background-color: #0d6efd;
+                color: white;
+                border-color: #0d6efd;
+            }
+
+            .pagination li a:hover {
+                background-color: #0d6efd;
+                color: white;
+            }
+
+            .pagination li.disabled span {
+                color: #999;
+                border-color: #ddd;
+            }
+    </style>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - The Kings Bookshop</title>
+
+        <!-- Nhúng Bootstrap và FontAwesome -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+        <!-- [QUAN TRỌNG] Nhúng file CSS chung cho toàn bộ Layout -->
+        <link href="~/Content/myStyle/CustomerLayout.css" rel="stylesheet" />
+
+        <!-- Cho phép các trang con chèn CSS riêng của nó vào đây -->
+        @RenderSection("Styles", required: false)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - QUẢN TRỊ WEBSITE</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
+    @* Lấy số lượng sản phẩm trong giỏ từ Session *@
+    @{
+        var cart = Session["Cart"] as _25DH110028_MyStore.Models.ViewModel.Cart;
+        int cartCount = cart == null ? 0 : cart.TotalQuantity();
+    }
+
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("The Kings Bookshop", "Index", "Home/admin", new { area = "" }, new { @class = "navbar-brand" })
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between align-items-center">
+
+                @* Menu chính *@
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Trang chủ", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Danh mục", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Sản phẩm", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Khách hàng", "Index", "Customers", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Đơn hàng", "Index", "Orders", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Tài khoản", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
+
+                @* Giỏ hàng: biểu tượng xe đẩy + số lượng *@
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2"
+                           href="@Url.Action("Index", "Cart", new { area = "" })">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                            </svg>
+                            <span>Giỏ hàng</span>
+                            @if (cartCount > 0)
+                            {
+                                <span class="badge rounded-pill" style="background:#69C7E0; color:#1F3A4D;">@cartCount</span>
+                            }
+                        </a>
+                    </li>
+                </ul>
+
             </div>
         </div>
     </nav>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - The Kings Bookshop</p>
+            <h4>Contact</h4>
+            <p>Adress: 123 Lý Thường Kiệt, Q10, TP.HCM </p>
+            <p>Email: TheKingsBookshop@gmail.com</p>
+            <p>Tel: 0777552467</p>
         </footer>
     </div>
 

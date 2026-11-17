@@ -1,8 +1,203 @@
-﻿
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewBag.Title = "Trang quản trị - Tổng quan";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>TRANG QUẢN TRỊ</h2>
+<!-- Liên kết file CSS riêng -->
+<link href="~/Content/myStyle/AdminDashboard.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/AdminLayout.css" />
 
+<div class="dashboard-page">
+
+    <!-- TIÊU ĐỀ TRANG -->
+    <div class="dashboard-header">
+        <div>
+            <h2>Dashboard</h2>
+            <p>Xin chào, chúc bạn một ngày làm việc hiệu quả tại hệ thống MyStore!</p>
+        </div>
+        <div style="font-size: 13px; color: #64748b; font-weight: 600;">
+            Home / Dashboard / Tổng quan
+        </div>
+    </div>
+
+    <!-- 1. CÁC THẺ THỐNG KÊ -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-body">
+                <h3 class="stat-number">@ViewBag.TotalProducts</h3>
+                <p class="stat-label">Sản phẩm</p>
+            </div>
+            <div class="stat-icon-box bg-red"><span>📚</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-body">
+                <h3 class="stat-number">@ViewBag.TotalCategories</h3>
+                <p class="stat-label">Danh mục</p>
+            </div>
+            <div class="stat-icon-box bg-blue"><span>📂</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-body">
+                <h3 class="stat-number">@ViewBag.TotalCustomers</h3>
+                <p class="stat-label">Khách hàng</p>
+            </div>
+            <div class="stat-icon-box bg-teal"><span>👥</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-body">
+                <h3 class="stat-number">@ViewBag.TotalUsers</h3>
+                <p class="stat-label">Tài khoản</p>
+            </div>
+            <div class="stat-icon-box bg-yellow"><span>👤</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-body">
+                <h3 class="stat-number">@ViewBag.TotalOrders</h3>
+                <p class="stat-label">Đơn hàng</p>
+            </div>
+            <div class="stat-icon-box bg-purple"><span>🛒</span></div>
+        </div>
+    </div>
+
+    <!-- 2. KHUNG TỔNG DOANH THU -->
+    <div class="revenue-panel">
+        <div>
+            <span>💰 Tổng doanh thu từ các đơn hàng đã thanh toán thành công</span>
+        </div>
+        <div>
+            <strong>@String.Format("{0:N0} VNĐ", ViewBag.TotalRevenue)</strong>
+        </div>
+    </div>
+
+    <!-- 3. CÁC KHUNG BIỂU ĐỒ -->
+    <div class="chart-grid">
+        <!-- Biểu đồ cột thống kê hệ thống -->
+        <div class="chart-box">
+            <div class="chart-header">
+                <div class="chart-title">📊 Thống kê dữ liệu hệ thống</div>
+                <div class="chart-subtitle">So sánh số lượng giữa các thực thể chính</div>
+            </div>
+            <div class="chart-canvas-container">
+                <canvas id="overviewChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Biểu đồ tròn trạng thái thanh toán -->
+        <div class="chart-box">
+            <div class="chart-header">
+                <div class="chart-title">💳 Tình trạng thanh toán đơn hàng</div>
+                <div class="chart-subtitle">Tỷ lệ đơn đã thanh toán và chưa thanh toán</div>
+            </div>
+            <div class="chart-canvas-container" style="height: 215px;">
+                <canvas id="paymentChart"></canvas>
+            </div>
+            <div class="payment-stats">
+                <div class="payment-card">
+                    <span>ĐÃ THANH TOÁN</span>
+                    <strong style="color: #00a65a;">@ViewBag.PaidOrders</strong>
+                </div>
+                <div class="payment-card">
+                    <span>CHƯA THANH TOÁN</span>
+                    <strong style="color: #d9534f;">@ViewBag.UnpaidOrders</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- DỮ LIỆU ĐẨY VÀO JAVASCRIPT -->
+<div id="dashboardData"
+     data-products="@ViewBag.TotalProducts"
+     data-categories="@ViewBag.TotalCategories"
+     data-customers="@ViewBag.TotalCustomers"
+     data-users="@ViewBag.TotalUsers"
+     data-orders="@ViewBag.TotalOrders"
+     data-paid="@ViewBag.PaidOrders"
+     data-unpaid="@ViewBag.UnpaidOrders"
+     style="display:none;">
+</div>
+
+<!-- THƯ VIỆN CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- SCRIPT VẼ BIỂU ĐỒ -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dataElement = document.getElementById("dashboardData");
+        if (!dataElement) return;
+
+        var totalProducts = Number(dataElement.getAttribute("data-products")) || 0;
+        var totalCategories = Number(dataElement.getAttribute("data-categories")) || 0;
+        var totalCustomers = Number(dataElement.getAttribute("data-customers")) || 0;
+        var totalUsers = Number(dataElement.getAttribute("data-users")) || 0;
+        var totalOrders = Number(dataElement.getAttribute("data-orders")) || 0;
+        var paidOrders = Number(dataElement.getAttribute("data-paid")) || 0;
+        var unpaidOrders = Number(dataElement.getAttribute("data-unpaid")) || 0;
+
+        var ChartLibrary = window.Chart;
+        if (typeof ChartLibrary !== "function") return;
+
+        // 1. Biểu đồ cột
+        var overviewCanvas = document.getElementById("overviewChart");
+        if (overviewCanvas) {
+            new ChartLibrary(overviewCanvas, {
+                type: "bar",
+                data: {
+                    labels: ["Sản phẩm", "Danh mục", "Khách hàng", "Tài khoản", "Đơn hàng"],
+                    datasets: [{
+                        label: "Số lượng",
+                        data: [totalProducts, totalCategories, totalCustomers, totalUsers, totalOrders],
+                        backgroundColor: ["#d9534f", "#3e8fb0", "#00a65a", "#f39c12", "#605ca8"],
+                        borderRadius: 4,
+                        maxBarThickness: 45
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Biểu đồ tròn (Doughnut)
+        var paymentCanvas = document.getElementById("paymentChart");
+        if (paymentCanvas) {
+            new ChartLibrary(paymentCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: ["Đã thanh toán", "Chưa thanh toán"],
+                    datasets: [{
+                        data: [paidOrders, unpaidOrders],
+                        backgroundColor: ["#00a65a", "#d9534f"],
+                        borderWidth: 2,
+                        borderColor: "#ffffff",
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: { boxWidth: 12, font: { size: 11 } }
+                        }
+                    },
+                    cutout: "60%"
+                }
+            });
+        }
+    });
+</script>

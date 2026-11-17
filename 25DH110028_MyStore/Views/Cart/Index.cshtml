@@ -1,0 +1,139 @@
+﻿@model _25DH110028_MyStore.Models.ViewModel.Cart
+@{
+    ViewBag.Title = "Giỏ hàng";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerOrder.css" />
+
+<script>
+    // Gửi form POST ẩn để cập nhật số lượng
+    function cartUpdateQuantity(id, newQuantity) {
+        if (newQuantity < 1) return;
+
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '@Url.Action("UpdateQuantity", "Cart")';
+
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = id;
+        form.appendChild(idInput);
+
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'hidden';
+        quantityInput.name = 'quantity';
+        quantityInput.value = newQuantity;
+        form.appendChild(quantityInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+
+<div class="my-orders-container" style="max-width: 1200px; margin: 30px auto; padding: 0 15px;">
+    <h2 class="od-title">GIỎ HÀNG CỦA BẠN</h2>
+
+    @if (TempData["CartMessage"] != null)
+    {
+        <div style="background:#fff3cd; color:#8a6d00; border-radius:8px; padding:10px 14px; margin-bottom:15px; border: 1px solid #ffeeba;">
+            @TempData["CartMessage"]
+        </div>
+    }
+
+    @if (!Model.Items.Any())
+    {
+        <div class="od-empty">
+            <p style="font-size: 16px; margin-bottom: 15px;">Bạn chưa có sản phẩm nào trong giỏ hàng.</p>
+            <a href="@Url.Action("Index", "Home")" class="od-mini" style="display: inline-block; padding: 10px 25px; text-decoration: none;">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="od-grid">
+            <!-- CỘT BÊN TRÁI: Chi tiết giỏ hàng nhóm theo danh mục -->
+            <div class="od-card" style="margin-bottom: 0;">
+                @foreach (var categoryGroup in Model.GroupedItems)
+                {
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0ece0; padding-bottom: 8px; margin-bottom: 15px;">
+                        <h3 style="color: #1F3A4D; margin: 0;">@categoryGroup.Key</h3>
+                        <a href="@Url.Action("ClearCart", "Cart")" style="color: #B5382E; font-size: 13px; font-weight: 600; text-decoration: none;" onclick="return confirm('Bạn có chắc chắn muốn xóa hết giỏ hàng?');">Xóa hết</a>
+                    </div>
+
+                    <table class="od-table" style="margin-bottom: 25px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">Sản phẩm</th>
+                                <th style="text-align: center; width: 15%;">Số lượng</th>
+                                <th style="width: 15%;">Đơn giá</th>
+                                <th class="od-num" style="width: 15%;">Thành tiền</th>
+                                <th style="text-align: center; width: 5%;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in categoryGroup)
+                            {
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <img src="@item.ProductImage" alt="@item.ProductName" style="width: 55px; height: 70px; object-fit: cover; border: 1px solid #f0ece0; border-radius: 4px;" />
+                                            <div style="font-weight: 600; color: #1F3A4D; line-height: 1.4;">@item.ProductName</div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center; white-space: nowrap;">
+                                        <div style="display: inline-flex; align-items: center; border: 1px solid #e3dcc8; border-radius: 6px; overflow: hidden; background: #fff;">
+                                            <button type="button" style="padding: 4px 10px; background: #f8fafc; border: none; cursor: pointer; font-weight: bold; color: #1F3A4D;"
+                                                    onclick="cartUpdateQuantity(@item.ProductID, @item.Quantity - 1)">
+                                                -
+                                            </button>
+                                            <input type="text" value="@item.Quantity" readonly
+                                                   style="width: 36px; text-align: center; border: none; font-weight: 600; background: #fff; color: #1F3A4D;" />
+                                            <button type="button" style="padding: 4px 10px; background: #f8fafc; border: none; cursor: pointer; font-weight: bold; color: #1F3A4D;"
+                                                    onclick="cartUpdateQuantity(@item.ProductID, @item.Quantity + 1)">
+                                                +
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td style="white-space: nowrap;">@item.UnitPrice.ToString("N0") đ</td>
+                                    <td class="od-num" style="font-weight: 700; color: #B5382E; white-space: nowrap;">
+                                        @item.TotalPrice.ToString("N0") đ
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <a href="@Url.Action("RemoveFromCart", "Cart", new { id = item.ProductID })" title="Xóa sản phẩm" style="color: #B5382E; font-weight: bold; text-decoration: none; font-size: 16px;">&times;</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <!-- CỘT BÊN PHẢI: Khung cộng giỏ hàng & nút Tiến hành đặt hàng -->
+            <div class="od-summary">
+                <div class="od-card">
+                    <h3 style="border-bottom: 1px solid #f0ece0; padding-bottom: 10px; margin-bottom: 12px;">Cộng giỏ hàng</h3>
+                    <div class="od-sum-row">
+                        <span>Tạm tính</span>
+                        <span>@Model.TotalValue().ToString("N0") đ</span>
+                    </div>
+                    <div class="od-sum-row">
+                        <span>Phí vận chuyển</span>
+                        <span>Miễn phí</span>
+                    </div>
+                    <div class="od-sum-row total">
+                        <span>Tổng giá trị</span>
+                        <span>@Model.TotalValue().ToString("N0") đ</span>
+                    </div>
+
+                    <!-- Nút Mua hàng chuẩn giao diện hệ thống màu Sky -->
+                    <a href="@Url.Action("Checkout", "Order")" class="od-btn">Tiến hành đặt hàng</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SẢN PHẨM TƯƠNG TỰ (NẾU CÓ) -->
+    <div style="width: 100%; margin-top: 30px;">
+        @Html.Partial("_PVSimilarProduct", Model)
+    </div>
+</div>

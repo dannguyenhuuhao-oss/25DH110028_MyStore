@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - MyStore Admin</title>
+
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- [QUAN TRỌNG] Nhúng file CSS chung của Admin từ thư mục myStyle -->
+    <link href="~/Content/myStyle/AdminLayout.css" rel="stylesheet" />
+
+    <!-- Cho phép các trang con trong Admin chèn CSS riêng -->
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+
+    <!-- TOP HEADER ADMIN -->
+    <div class="admin-header">
+        <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 20px; font-weight: bold;">
+                <i class="fa fa-shield-alt"></i> MyStore | <span style="font-weight: 300;">Admin Management</span>
+            </div>
+            <div>
+                <span style="margin-right: 15px;"><i class="fa fa-user"></i> Xin chào, <strong>@Session["Username"]</strong></span>
+                <a href="@Url.Action("Logout", "Account", new { area = "" })" class="btn btn-danger btn-xs" style="padding: 5px 10px; border-radius: 15px;">
+                    <i class="fa fa-sign-out-alt"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR MENU ADMIN -->
+    <nav class="navbar navbar-admin">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Home", new { area = "Admin" })"><i class="fa fa-home"></i> Tổng quan</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Categories" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Categories", new { area = "Admin" })"><i class="fa fa-list"></i> Quản lý danh mục</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Products" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Products", new { area = "Admin" })"><i class="fa fa-box"></i> Quản lý sản phẩm</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Users" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Users", new { area = "Admin" })"><i class="fa fa-users-cog"></i> Quản lý tài khoản</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Customers" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Customers", new { area = "Admin" })"><i class="fa fa-users"></i> Quản lý khách hàng</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Orders" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Orders", new { area = "Admin" })"><i class="fa fa-shopping-cart"></i> Quản lý đơn hàng</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="@Url.Action("Index", "Home", new { area = "" })" target="_blank"><i class="fa fa-external-link-alt"></i> Về trang chính</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <div class="container-fluid">
+        <div class="admin-content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- FOOTER ADMIN -->
+    <footer class="text-center" style="padding: 20px; color: #777; font-size: 13px;">
+        <p>&copy; @DateTime.Now.Year - MyStore Admin Panel | Developed for Student Project</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

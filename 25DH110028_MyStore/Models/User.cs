@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // C?n using thý vi?n này cho [NotMapped]
 namespace _25DH110028_MyStore.Models
 {
     using System;
@@ -23,8 +25,10 @@ namespace _25DH110028_MyStore.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string UserRole { get; set; }
-    
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Customer> Customers { get; set; }
+        
+
     }
 }

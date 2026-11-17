@@ -1,0 +1,47 @@
+﻿@model _25DH110028_MyStore.Models.User
+
+@{
+    ViewBag.Title = "Xóa tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success text-center" style="padding: 10px;">XÓA TÀI KHOẢN</h2>
+
+<h4 class="alert alert-danger text-center">Bạn thực sự muốn xóa tài khoản này chứ?</h4>
+
+<!-- Hiển thị thông báo lỗi nếu tài khoản đang bị vướng khóa ngoại với bảng Customer -->
+@if (ViewBag.DeleteError != null)
+{
+    <div class="alert alert-warning">
+        <strong>Cảnh báo:</strong> @ViewBag.DeleteError
+    </div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Tên đăng nhập:</dt>
+            <dd>@Model.Username</dd>
+
+            <dt>Vai trò:</dt>
+            <dd>@Model.UserRole</dd>
+        </dl>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color" style="margin-top: 20px;">
+        @if (ViewBag.CustomerCount == 0)
+        {
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+        }
+        else
+        {
+            <button type="submit" class="btn btn-danger" disabled title="Không thể xóa do có dữ liệu liên kết">Xóa</button>
+        }
+        @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })
+    </div>
+}

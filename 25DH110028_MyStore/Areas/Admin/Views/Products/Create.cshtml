@@ -4,16 +4,18 @@
     ViewBag.Title = "Create";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
+@section Styles {
+    <link href="~/Content/myStyle/AdminProduct.css" rel="stylesheet" />
+}
 <h2 class="alert alert-success">THÊM SẢN PHẨM</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.Partial("PVCreateEditProduct", Model)
-</div>
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.Partial("PVCreateEditProduct", Model)
+    </div>
 }
- 
+

@@ -1,0 +1,11 @@
+﻿@model IEnumerable<_25DH110028_MyStore.Models.Category>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <a href="@Url.Action("ProductList", "Home", new { id = item.CategoryID })">
+            @item.CategoryName
+        </a>
+    }
+}

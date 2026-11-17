@@ -18,11 +18,11 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
         private MyStoreEntities db = new MyStoreEntities();
 
         // GET: Admin/Products
-        public ActionResult Index()
-        {
-            var products = db.Products.Include(p => p.Category);
-            return View(products.ToList());
-        }
+        //public ActionResult Index()
+        //{
+        //    var products = db.Products.Include(p => p.Category);
+        //    return View(products.ToList());
+        //}
         // GET: Admin/Products
         // GET: Admin/Products
         // GET: Admin/Products
@@ -54,39 +54,38 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
                 model.MaxPrice = maxPrice.Value;
                 products = products.Where(p => p.ProductPrice <= maxPrice.Value);
             }
-
+           
             // Áp dụng sắp xếp dựa trên lựa chọn của người dùng
             switch (sortOrder)
             {
                 case "name_asc":
                     products = products.OrderBy(p => p.ProductName);
                     break;
+
                 case "name_desc":
                     products = products.OrderByDescending(p => p.ProductName);
+                    break;
+                
+                case "price_desc":
+                    products = products.OrderByDescending(p => p.ProductPrice);
                     break;
                 case "price_asc":
                     products = products.OrderBy(p => p.ProductPrice);
                     break;
-                case "price_desc":
-                    products = products.OrderByDescending(p => p.ProductPrice);
-                    break;
-                default: // Mặc định sắp xếp theo tên
+               
+                default: // Sắp xếp mặc định
                     products = products.OrderBy(p => p.ProductName);
                     break;
             }
 
             model.SortOrder = sortOrder;
 
-            // Đoạn code liên quan tới phân trang
-            // Lấy số trang hiện tại (mặc định là trang 1 nếu không có giá trị)
             int pageNumber = page ?? 1;
-            int pageSize = 2; // Số sản phẩm mỗi trang
-
-            // đóng câu lệnh này, sử dụng ToPagedList để lấy danh sách đã phân trang
-            //model.Products = products.ToList();
-            model.Products = products.ToPagedList(pageNumber, pageSize);
-
+            model.Products = products.ToPagedList(pageNumber, 10); // 10 là số SP trên 1 trang
             return View(model);
+
+            //return View(model);
+           
         }
         // GET: Admin/Products/Details/5
         public ActionResult Details(int? id)
@@ -110,9 +109,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
             return View();
         }
 
-        // POST: Admin/Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ProductID,CategoryID,ProductName,ProductPrice,ProductImage,ProductDescription")] Product product)
@@ -149,7 +146,7 @@ namespace _25DH110028_MyStore.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,CategoryID,ProductName,ProductPrice,ProductImage,ProductDescription")] Product product)
+        public ActionResult Edit([Bind(Include = "ProductID,CategoryID,ProductName,ProductDescription,ProductPrice,ProductImage,Quantity")] Product product)
         {
             if (ModelState.IsValid)
             {

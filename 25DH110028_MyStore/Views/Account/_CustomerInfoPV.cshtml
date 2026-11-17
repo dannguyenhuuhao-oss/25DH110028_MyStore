@@ -1,0 +1,32 @@
+﻿@model _25DH110028_MyStore.Models.ViewModel.ProfileVM
+
+<div class="ci-overlay" id="customerInfoModal" aria-hidden="true">
+    <div class="ci-box" role="dialog" aria-labelledby="ciTitle">
+        <button type="button" class="ci-close" data-ci-close aria-label="Đóng">&times;</button>
+
+        <div class="ci-head">
+            <div class="ci-avatar">@((Model.CustomerName ?? "?").Trim().Substring(0, 1).ToUpper())</div>
+            <div>
+                <small>Tài khoản của</small>
+                <h3 id="ciTitle">@Model.CustomerName</h3>
+            </div>
+        </div>
+
+        <dl class="ci-info">
+            <dt>Tên đăng nhập</dt>
+            <dd>@Model.Username</dd>
+            <dt>Họ tên</dt>
+            <dd>@Model.CustomerName</dd>
+            <dt>Số điện thoại</dt>
+            <dd>@Model.CustomerPhone</dd>
+            <dt>Email</dt>
+            <dd>@(string.IsNullOrEmpty(Model.CustomerEmail) ? "Chưa có" : Model.CustomerEmail)</dd>
+            <dt>Địa chỉ</dt>
+            <dd>@(string.IsNullOrEmpty(Model.CustomerAddress) ? "Chưa có" : Model.CustomerAddress)</dd>
+        </dl>
+        <div class="ci-actions">
+            <a class="ci-btn" href="@Url.Content("~/Account/ProfileInfo")">Chỉnh sửa thông tin</a>
+            <button type="button" class="ci-btn ci-btn-light" data-ci-close>Đóng</button>
+        </div>
+    </div>
+</div>

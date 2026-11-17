@@ -19,7 +19,7 @@ namespace _25DH110028_MyStore.Models.ViewModel
         public string SortOrder { get; set; }
 
         // Các thuộc tính hỗ trợ phân trang
-        public int PageNumber { get; set; } // Trang hiện tại
+        public int PageNumber { get; set; } =  1 ;// Trang hiện tại
         public int PageSize { get; set; } = 10; // Số sản phẩm mỗi trang
 
         // Danh sách Sản phẩm đã phân trang

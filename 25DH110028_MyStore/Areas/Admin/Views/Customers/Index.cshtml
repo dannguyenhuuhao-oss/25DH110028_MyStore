@@ -1,0 +1,49 @@
+﻿@model PagedList.IPagedList<_25DH110028_MyStore.Models.Customer>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Quản lý Khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success text-center" style="padding: 10px;">DANH SÁCH KHÁCH HÀNG</h2>
+
+@using (Html.BeginForm("Index", "Customers", FormMethod.Get))
+{
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col-md-4">
+            <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Tìm theo tên, SĐT, email..." />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
+    </div>
+}
+
+<table class="table table-bordered table-striped bg-info">
+    <tr>
+        <th class="bg-success">Tên đăng nhập</th>
+        <th class="bg-success">Họ tên khách hàng</th>
+        <th class="bg-success">Số điện thoại</th>
+        <th class="bg-success">Email</th>
+        <th class="bg-success">Thao tác</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.Username)</td>
+            <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
+            <td>@Html.DisplayFor(modelItem => item.CustomerPhone)</td>
+            <td>@Html.DisplayFor(modelItem => item.CustomerEmail)</td>
+            <td>
+                @Html.ActionLink("Chi tiết & Đơn hàng", "Details", new { id = item.CustomerID }, new { @class = "btn btn-info btn-sm" })
+            </td>
+        </tr>
+    }
+</table>
+
+<div class="text-center">
+    Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchTerm = ViewBag.SearchTerm }))
+</div>

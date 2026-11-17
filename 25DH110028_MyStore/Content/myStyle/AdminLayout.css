@@ -1,0 +1,461 @@
+﻿/* ================= CSS CHO KHU VỰC QUẢN TRỊ (ADMIN LAYOUT) ================= */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1F3A4D;
+    background-color: #FAF7EE;
+}
+
+:root {
+    --ad-navy: #1F3A4D;
+    --ad-cream: #EFEAD8;
+    --ad-sky: #3E8FB0;
+    --ad-sky-light: #69C7E0;
+    --ad-pink: #E9A6C4;
+    --ad-bg: #FAF7EE;
+    --ad-border: #e3dcc8;
+}
+
+/* ============ THANH ĐẦU ADMIN (HEADER) ============ */
+.ad-header {
+    background: linear-gradient(135deg, var(--ad-navy) 0%, #2b4f68 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.ad-header-inner {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ad-logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ad-cream);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .ad-logo b {
+        color: var(--ad-sky-light);
+    }
+
+    .ad-logo:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+.ad-badge {
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--ad-cream);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* Khu vực thông tin Admin phía phải header */
+.ad-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.ad-user-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--ad-cream);
+    color: var(--ad-navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.ad-hello {
+    color: var(--ad-cream);
+}
+
+    .ad-hello strong {
+        color: #fff;
+    }
+
+.ad-logout {
+    color: #ffcccc;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    transition: all 0.2s;
+    margin-left: 5px;
+}
+
+    .ad-logout:hover {
+        background: #d9534f;
+        color: #fff;
+        text-decoration: none;
+    }
+
+
+/* ============ THANH MENU ĐIỀU HƯỚNG (NAVBAR) ============ */
+.ad-nav {
+    background: #fff;
+    border-bottom: 1px solid var(--ad-border);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    position: relative; /* Quan trọng: Giữ khung tham chiếu cho dropdown */
+    z-index: 100;
+}
+
+.ad-nav-inner {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép các mục tự xuống dòng nếu màn hình nhỏ thay vì dùng thanh cuộn */
+    overflow: visible !important; /* Đảm bảo không bị cắt nội dung xổ xuống */
+}
+
+    .ad-nav-inner > a,
+    .ad-dd-toggle {
+        color: var(--ad-navy);
+        text-decoration: none;
+        padding: 14px 16px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+        .ad-nav-inner > a:hover,
+        .ad-dd:hover .ad-dd-toggle,
+        .ad-nav-inner > a.active,
+        .ad-dd-toggle.active {
+            color: var(--ad-sky);
+            border-bottom-color: var(--ad-sky);
+            background: rgba(62, 143, 176, 0.04);
+            text-decoration: none;
+        }
+
+/* Dropdown Menu trong Admin Nav */
+.ad-dd {
+    position: relative;
+    overflow: visible !important;
+}
+
+.ad-dd-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid var(--ad-border);
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    padding: 6px 0;
+    z-index: 99999 !important; /* Đảm bảo nổi lên trên cùng */
+}
+
+.ad-dd:hover .ad-dd-menu {
+    display: block;
+}
+
+.ad-dd-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: var(--ad-navy);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+    .ad-dd-menu a:hover {
+        background: var(--ad-bg);
+        color: var(--ad-sky);
+    }
+/* Dropdown Menu trong Admin Nav */
+.ad-dd {
+    position: relative;
+}
+
+.ad-dd-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid var(--ad-border);
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    padding: 6px 0;
+    z-index: 2000;
+}
+
+.ad-dd:hover .ad-dd-menu {
+    display: block;
+}
+
+.ad-dd-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: var(--ad-navy);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+    .ad-dd-menu a:hover {
+        background: var(--ad-bg);
+        color: var(--ad-sky);
+    }
+
+/* Spacer và nút về trang chính */
+.ad-nav-spacer {
+    flex: 1;
+}
+
+.ad-nav-right {
+    color: #666 !important;
+    background: #f4f2ea;
+    border-radius: 6px;
+    padding: 8px 14px !important;
+    margin: 6px 0;
+    border-bottom: none !important;
+}
+
+    .ad-nav-right:hover {
+        background: var(--ad-navy) !important;
+        color: #fff !important;
+        border-bottom-color: transparent !important;
+    }
+
+
+/* ============ PHẦN NỘI DUNG CHÍNH (MAIN CONTENT) ============ */
+.ad-main {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 25px 20px;
+    min-height: calc(100vh - 160px);
+}
+
+.ad-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 3px 12px rgba(31, 58, 77, 0.05);
+    border: 1px solid var(--ad-border);
+}
+
+
+/* ============ CHÂN TRANG ADMIN (FOOTER) ============ */
+.ad-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #666;
+    border-top: 1px solid var(--ad-border);
+    background: #fff;
+    margin-top: 40px;
+}
+/* ================= TỐI ƯU HÓA GIAO DIỆN BẢNG (TABLE) TRONG ADMIN ================= */
+
+/* Khung bọc nội dung trang Admin */
+.ad-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(31, 58, 77, 0.06);
+    border: 1px solid var(--ad-border);
+}
+
+    /* Định dạng bảng dữ liệu */
+    .ad-content table.table,
+    .ad-content table {
+        width: 100%;
+        border-collapse: separate !important;
+        border-spacing: 0;
+        margin-top: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--ad-border);
+    }
+
+        /* Tiêu đề bảng (Header) */
+        .ad-content table th {
+            background-color: var(--ad-navy) !important;
+            color: var(--ad-cream) !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            padding: 12px 15px;
+            border: none !important;
+        }
+
+        /* Các ô dữ liệu trong bảng */
+        .ad-content table td {
+            padding: 12px 15px;
+            vertical-align: middle !important;
+            border-top: 1px solid var(--ad-border) !important;
+            color: var(--ad-navy);
+            background-color: #fff !important;
+        }
+
+        /* Hiệu ứng đan xen màu hàng chẵn/lẻ nhẹ nhàng */
+        .ad-content table tr:nth-child(even) td {
+            background-color: #FAF7EE !important;
+        }
+
+        .ad-content table tr:hover td {
+            background-color: rgba(62, 143, 176, 0.05) !important;
+        }
+
+        /* Đồng bộ hóa các nút bấm Thao tác (Sửa, Chi tiết, Xóa) trong bảng */
+        .ad-content table .btn,
+        .ad-content table a.btn {
+            border-radius: 6px !important;
+            padding: 5px 12px !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            border: none !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        /* Nút Sửa / Chi tiết (Màu xanh chủ đạo) */
+        .ad-content table .btn-primary,
+        .ad-content table .btn-info,
+        .ad-content table a[href*="Edit"],
+        .ad-content table a[href*="Details"] {
+            background-color: var(--ad-sky) !important;
+            color: #fff !important;
+        }
+
+            .ad-content table .btn-primary:hover,
+            .ad-content table .btn-info:hover {
+                background-color: var(--ad-navy) !important;
+            }
+
+        /* Nút Xóa (Màu đỏ nhẹ nhàng) */
+        .ad-content table .btn-danger,
+        .ad-content table a[href*="Delete"] {
+            background-color: #d9534f !important;
+            color: #fff !important;
+        }
+
+            .ad-content table .btn-danger:hover {
+                background-color: #c9302c !important;
+            }
+/* ============ GIAO DIỆN NÚT BẤM SẮP XẾP ============ */
+.btn-sort {
+    background-color: #EFEAD8; /* Màu kem nhạt chủ đạo */
+    color: #1F3A4D !important; /* Màu chữ Navy */
+    padding: 6px 14px;
+    border-radius: 20px; /* Bo tròn mềm mại dạng pill */
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    border: 1px solid #e3dcc8;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+    .btn-sort:hover {
+        background-color: #3E8FB0; /* Đổi sang màu xanh sky-deep khi rê chuột */
+        color: #fff !important;
+        border-color: #3E8FB0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(62, 143, 176, 0.25);
+    }
+/* ================= ĐỒNG BỘ GIAO DIỆN TRANG ADMIN ================= */
+
+/* 1. Đổi khối tiêu đề trang (thay vì màu xanh lá cây cũ) sang tông Navy/Cream/Sky */
+.ad-content h2,
+.ad-content > div > h2,
+.ad-content .panel-heading,
+.ad-content div[style*="background"],
+.ad-content .alert-success,
+div[style*="background-color: green"],
+div[style*="background: green"],
+.ad-content h2:first-of-type {
+    /* Nếu các tiêu đề trang được bọc trong div màu xanh lá cũ */
+}
+
+    /* Ép tất cả các tiêu đề chính đầu trang Admin dùng chung kiểu sang trọng, đồng bộ */
+    .ad-content > h2,
+    .ad-content > div > h2:first-child {
+        background: linear-gradient(135deg, var(--ad-navy) 0%, #2b4f68 100%) !important;
+        color: var(--ad-cream) !important;
+        padding: 15px 20px !important;
+        border-radius: 8px !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 3px 10px rgba(31, 58, 77, 0.15) !important;
+    }
+
+/* 2. Chuẩn hóa màu nền các khối header bảng (th) đồng nhất một màu Navy chuẩn */
+.ad-content table th {
+    background-color: var(--ad-navy) !important;
+    color: var(--ad-cream) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 13px !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 15px !important;
+    border: none !important;
+}
+
+/* 3. Tinh chỉnh nút tìm kiếm và các nút bấm chính trong trang Admin sang màu Sky */
+.ad-content .btn-primary,
+.ad-content button[type="submit"] {
+    background-color: var(--ad-sky) !important;
+    border-color: var(--ad-sky) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    padding: 7px 18px !important;
+    transition: all 0.2s;
+}
+
+    .ad-content .btn-primary:hover,
+    .ad-content button[type="submit"]:hover {
+        background-color: var(--ad-navy) !important;
+        border-color: var(--ad-navy) !important;
+    }
+
+/* 4. Nút Thêm mới / Action phụ */
+.ad-content .btn-success {
+    background-color: var(--ad-sky) !important;
+    border: none !important;
+}
+
+    .ad-content .btn-success:hover {
+        background-color: var(--ad-navy) !important;
+    }

@@ -1,0 +1,177 @@
+﻿@model _25DH110028_MyStore.Models.ViewModel.ProfileVM
+@{
+    ViewBag.Title = "Thông tin tài khoản";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+
+    // Dữ liệu thật trong CSDL (để hiển thị), Model là dữ liệu trong form sửa
+    var saved = (ViewBag.Saved as _25DH110028_MyStore.Models.ViewModel.ProfileVM) ?? Model;
+    string openModal = (ViewBag.OpenModal as string) ?? (TempData["OpenModal"] as string);
+    string initial = string.IsNullOrWhiteSpace(saved.CustomerName)
+        ? "?" : saved.CustomerName.Trim().Substring(0, 1).ToUpper();
+}
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerAccount.css" />
+
+<div class="pf-layout">
+
+    @* ================= CỘT TRÁI: MENU TÀI KHOẢN ================= *@
+    <aside class="pf-side">
+        <div class="pf-user">
+            <div class="pf-avatar">@initial</div>
+            <div>
+                <small>Tài khoản của</small>
+                <strong>@saved.CustomerName</strong>
+            </div>
+        </div>
+        <nav class="pf-menu">
+            <a class="active" href="@Url.Action("ProfileInfo", "Account")">Thông tin tài khoản</a>
+            <a href="@Url.Action("MyOrder", "Order")">Đơn hàng của tôi</a>
+            <a href="@Url.Action("Index", "Cart")">Giỏ hàng</a>
+            <a href="@Url.Action("Logout", "Account")">Đăng xuất</a>
+        </nav>
+    </aside>
+
+    @* ================= PHẦN CHÍNH ================= *@
+    <section class="pf-main">
+        <h2>Thông tin tài khoản</h2>
+
+        @if (TempData["ProfileMessage"] != null)
+        {
+            <div class="account-success">@TempData["ProfileMessage"]</div>
+        }
+        @if (TempData["PasswordMessage"] != null)
+        {
+            <div class="account-success">@TempData["PasswordMessage"]</div>
+        }
+
+        @* ----- Khối 1: Thông tin cá nhân ----- *@
+        <div class="pf-card">
+            <div class="pf-card-head">
+                <h3>Thông tin cá nhân</h3>
+                <button type="button" class="pf-btn" data-bs-toggle="modal" data-bs-target="#profileModal">Cập nhật thông tin</button>
+            </div>
+            <dl class="pf-info">
+                <dt>Tên đăng nhập</dt>
+                <dd>@saved.Username</dd>
+                <dt>Họ tên</dt>
+                <dd>@saved.CustomerName</dd>
+                <dt>Số điện thoại</dt>
+                <dd>@saved.CustomerPhone</dd>
+                <dt>Email</dt>
+                <dd>@(string.IsNullOrEmpty(saved.CustomerEmail) ? "Chưa có" : saved.CustomerEmail)</dd>
+                <dt>Địa chỉ</dt>
+                <dd>@(string.IsNullOrEmpty(saved.CustomerAddress) ? "Chưa có" : saved.CustomerAddress)</dd>
+            </dl>
+        </div>
+
+        @* ----- Khối 2: Bảo mật ----- *@
+        <div class="pf-card">
+            <div class="pf-card-head">
+                <h3>Bảo mật</h3>
+            </div>
+            <div class="pf-secure">
+                <div>
+                    <strong>Đổi mật khẩu</strong>
+                    <small>Nên đổi mật khẩu định kỳ để bảo vệ tài khoản</small>
+                </div>
+                <button type="button" class="pf-btn" data-bs-toggle="modal" data-bs-target="#pwdModal">Cập nhật</button>
+            </div>
+        </div>
+    </section>
+</div>
+
+@* ================= CỬA SỔ 1: SỬA THÔNG TIN ================= *@
+<div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pf-modal">
+            <div class="modal-header">
+                <h4 class="modal-title">Cập nhật thông tin</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            @using (Html.BeginForm("UpdateProfile", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    @Html.ValidationSummary(true, "", new { @class = "account-error" })
+                    @Html.HiddenFor(m => m.Username)
+
+                    <div class="account-field">
+                        @Html.LabelFor(m => m.CustomerName)
+                        @Html.TextBoxFor(m => m.CustomerName, new { @class = "account-input" })
+                        @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "account-error" })
+                    </div>
+                    <div class="account-field">
+                        @Html.LabelFor(m => m.CustomerPhone)
+                        @Html.TextBoxFor(m => m.CustomerPhone, new { @class = "account-input" })
+                        @Html.ValidationMessageFor(m => m.CustomerPhone, "", new { @class = "account-error" })
+                    </div>
+                    <div class="account-field">
+                        @Html.LabelFor(m => m.CustomerEmail)
+                        @Html.TextBoxFor(m => m.CustomerEmail, new { @class = "account-input" })
+                        @Html.ValidationMessageFor(m => m.CustomerEmail, "", new { @class = "account-error" })
+                    </div>
+                    <div class="account-field">
+                        @Html.LabelFor(m => m.CustomerAddress)
+                        @Html.TextBoxFor(m => m.CustomerAddress, new { @class = "account-input" })
+                        @Html.ValidationMessageFor(m => m.CustomerAddress, "", new { @class = "account-error" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="pf-btn pf-btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="pf-btn">Lưu thay đổi</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@* ================= CỬA SỔ 2: ĐỔI MẬT KHẨU ================= *@
+<div class="modal fade" id="pwdModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pf-modal">
+            <div class="modal-header">
+                <h4 class="modal-title">Đổi mật khẩu</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            @using (Html.BeginForm("ChangePassword", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    @if (TempData["PasswordError"] != null)
+                    {
+                        <div class="account-fail">@TempData["PasswordError"]</div>
+                    }
+                    <div class="account-field">
+                        <label>Mật khẩu hiện tại</label>
+                        <input type="password" name="oldPassword" class="account-input" required />
+                    </div>
+                    <div class="account-field">
+                        <label>Mật khẩu mới</label>
+                        <input type="password" name="newPassword" class="account-input" required minlength="6" maxlength="50" />
+                    </div>
+                    <div class="account-field">
+                        <label>Xác nhận mật khẩu mới</label>
+                        <input type="password" name="confirmNewPassword" class="account-input" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="pf-btn pf-btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="pf-btn">Đổi mật khẩu</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @if (!string.IsNullOrEmpty(openModal))
+    {
+        <script>
+            // Có lỗi từ máy chủ: tự mở lại cửa sổ tương ứng để hiện thông báo
+            document.addEventListener('DOMContentLoaded', function () {
+                var el = document.getElementById('@(openModal == "password" ? "pwdModal" : "profileModal")');
+                if (el && window.bootstrap) new bootstrap.Modal(el).show();
+            });
+        </script>
+    }
+}

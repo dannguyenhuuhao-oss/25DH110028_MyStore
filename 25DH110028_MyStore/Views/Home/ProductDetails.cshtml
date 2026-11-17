@@ -1,0 +1,71 @@
+﻿@model _25DH110028_MyStore.Models.ViewModel.ProductDetailsVM
+@{
+    ViewBag.Title = "ProductDetails";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerDetailProduct.css" />
+
+<div class="container-fluid pro">
+    <div class="div-horizontal">
+
+        @* Khối bên trái: ảnh sản phẩm *@
+        <div class="col-md-3 pro-section">
+            <img src="@Model.product.ProductImage" />
+        </div>
+
+        @* Khối ở giữa: thông tin + sản phẩm tương tự *@
+        <div class="col-md-5 pro-section">
+            <div>
+                <h4><strong>@Html.DisplayFor(model => model.product.ProductName)</strong></h4>
+                <p class="pro-sale">Đã bán:&nbsp; @Model.product.OrderDetails.Count()</p>
+                <p class="pro-price">@Model.product.ProductPrice.ToString("N0") đ</p>
+                <p>Danh mục:&nbsp;@Model.product.Category.CategoryName</p>
+                <h5><strong>Mô tả</strong></h5>
+                <p>@Model.product.ProductDescription</p>
+            </div>
+            <hr />
+            <div>@Html.Partial("_PVRelatedProduct", Model)</div>
+        </div>
+
+        @* Khối bên phải: chọn mua + sản phẩm bán chạy *@
+        <div class="col-md-3 pro-section">
+            <div class="form-group">
+                @using (Html.BeginForm("ProductDetails", "Home", FormMethod.Get))
+                {
+                    <input type="hidden" name="id" value="@Model.product.ProductID" />
+
+                    <h4><strong>Số lượng</strong></h4>
+                    <p>
+                        @Html.TextBoxFor(m => m.quantity, new
+                        {
+                            @class = "form-control",
+                            @type = "number",
+                            @min = 1,
+                            onchange = "this.form.submit()"
+                        })
+                    </p>
+
+                    <h4><strong>Tạm tính</strong></h4>
+                    <p>@Model.estimatedValue.ToString("N0") đ</p>
+                }
+            <p>
+                @if (Model.product.Quantity > 0)
+                {
+                    <span style="display:block; margin-bottom:5px; font-weight:500;">Còn lại: @Model.product.Quantity</span>
+                    @Html.ActionLink("Thêm vào giỏ hàng", "AddToCart", "Cart",
+                        new { id = Model.product.ProductID, quantity = Model.quantity },
+                        new { @class = "btn btn-info" })
+                }
+                else
+                {
+                    <span style="color:#B5382E; font-weight:600; display:block; padding: 6px 0;">Hết hàng</span>
+                }
+            </p>
+            </div>
+            <hr />
+            <div>@Html.Partial("_PVTopProduct", Model)</div>
+        </div>
+
+    </div>
+</div>

@@ -1,77 +1,91 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string ctrl = (ViewContext.RouteData.Values["controller"] as string) ?? "";
+    Func<string[], string> act = names =>
+        names.Any(n => string.Equals(n, ctrl, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
+}
+<!DOCTYPE html>
 <html>
 <head>
-    <style>
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin: 20px 0;
-            padding: 0;
-            list-style: none;
-        }
-
-            .pagination li a,
-            .pagination li span {
-                display: block;
-                padding: 8px 14px;
-                border: 1px solid #0d6efd;
-                border-radius: 5px;
-                text-decoration: none;
-                color: #0d6efd;
-            }
-
-            .pagination li.active span {
-                background-color: #0d6efd;
-                color: white;
-                border-color: #0d6efd;
-            }
-
-            .pagination li a:hover {
-                background-color: #0d6efd;
-                color: white;
-            }
-
-            .pagination li.disabled span {
-                color: #999;
-                border-color: #ddd;
-            }
-    </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - QUẢN TRỊ WEBSITE</title>
+    <title>@ViewBag.Title - Quản trị The Kings Bookshop</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/myStyle/AdminLayout.css" />    @* Chart.js: nếu layout cũ của bạn có dòng nạp Chart.js thì thêm lại ở đây *@
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("My Store", "Index", "Admin/Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Danh mục", "About", "Categories", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Sản phẩm", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Khách hàng", "Index", "Customers", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Đơn hàng", "Index", "Orders", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Tài khoản", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
+
+    @* ============ THANH ĐẦU ============ *@
+    <header class="ad-header">
+        <div class="ad-header-inner">
+            <a class="ad-logo" href="@Url.Action("Index", "Home", new { area = "Admin" })">
+                THE <b>KINGS</b> <span class="ad-badge">Admin Management</span>
+            </a>
+
+            <div class="ad-user">
+                <span class="ad-user-icon"><i class="fas fa-user"></i></span>
+                <span class="ad-hello">Xin chào, <strong>@User.Identity.Name</strong></span>
+                <a class="ad-logout" href="@Url.Action("Logout", "Account", new { area = "" })">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </a>
             </div>
         </div>
+    </header>
+
+    @* ============ THANH MENU ============ *@
+    <nav class="ad-nav">
+        <div class="ad-nav-inner">
+
+            <a class="@act(new[] { "Home" })" href="@Url.Action("Index", "Home", new { area = "Admin" })">
+                <i class="fas fa-home"></i> Tổng quan
+            </a>
+
+            <!-- Đưa Quản lý danh mục ra ngoài thành nút riêng -->
+            <a class="@act(new[] { "Categories" })" href="@Url.Action("Index", "Categories", new { area = "Admin" })">
+                <i class="fas fa-list"></i> Danh mục sản phẩm
+            </a>
+
+            <!-- Đưa Quản lý hàng hóa ra ngoài thành nút riêng -->
+            <a class="@act(new[] { "Products" })" href="@Url.Action("Index", "Products", new { area = "Admin" })">
+                <i class="fas fa-box"></i> Quản lý hàng hóa
+            </a>
+
+            <!-- Đưa Quản lý kho hàng ra ngoài thành nút riêng -->
+            <a class="@act(new[] { "Stock" })" href="@Url.Action("Index", "Stock", new { area = "Admin" })">
+                <i class="fas fa-warehouse"></i> Quản lý kho hàng
+            </a>
+
+            <a class="@act(new[] { "Customers" })" href="@Url.Action("Index", "Customers", new { area = "Admin" })">
+                <i class="fas fa-users"></i> Khách hàng
+            </a>
+
+            <a class="@act(new[] { "Orders" })" href="@Url.Action("Index", "Orders", new { area = "Admin" })">
+                <i class="fas fa-shopping-cart"></i> Đơn hàng
+            </a>
+
+            <a class="@act(new[] { "Users" })" href="@Url.Action("Index", "Users", new { area = "Admin" })">
+                <i class="fas fa-user-cog"></i> Tài khoản
+            </a>
+
+            <span class="ad-nav-spacer"></span>
+            <a class="ad-nav-right" href="@Url.Action("Index", "Home", new { area = "" })">
+                <i class="fas fa-external-link-alt"></i> Về trang chính
+            </a>
+        </div>
     </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Tên ứng dụng</p>
-            <h4>Contact</h4>
-            <p>Nguyễn Hữu Hạo Dân</p>
-        </footer>
-    </div>
+
+    @* ============ NỘI DUNG ============ *@
+    <main class="ad-main">
+        <div class="ad-content">
+            @RenderBody()
+        </div>
+    </main>
+
+    @* ============ CHÂN TRANG ============ *@
+    <footer class="ad-footer">
+        &copy; @DateTime.Now.Year - The Kings Bookshop · Khu vực quản trị
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

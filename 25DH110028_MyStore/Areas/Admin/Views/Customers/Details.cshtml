@@ -1,0 +1,62 @@
+﻿@model _25DH110028_MyStore.Models.Customer
+
+@{
+    ViewBag.Title = "Chi tiết Khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success text-center" style="padding: 10px;">THÔNG TIN CHI TIẾT KHÁCH HÀNG</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4><strong>@Model.CustomerName</strong></h4></div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Tên đăng nhập:</dt>
+            <dd>@Model.Username</dd>
+            <dt>Số điện thoại:</dt>
+            <dd>@Model.CustomerPhone</dd>
+            <dt>Email:</dt>
+            <dd>@Model.CustomerEmail</dd>
+            <dt>Địa chỉ:</dt>
+            <dd>@Model.CustomerAddress</dd>
+        </dl>
+    </div>
+</div>
+
+<h3>Danh sách đơn hàng của khách hàng này</h3>
+@if (Model.Orders != null && Model.Orders.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr class="bg-success">
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái thanh toán</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders.OrderByDescending(o => o.OrderDate))
+            {
+                <tr>
+                    <td>#@order.OrderID</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.TotalAmount.ToString("N0") đ</td>
+                    <td>@order.PaymentStatus</td>
+                    <td>
+                        @Html.ActionLink("Xem chi tiết đơn", "Details", "Orders", new { id = order.OrderID }, new { @class = "btn btn-sm btn-primary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="alert alert-warning">Khách hàng này chưa có đơn hàng nào.</p>
+}
+
+<p style="margin-top: 20px;">
+    @Html.ActionLink("Quay lại danh sách khách hàng", "Index", null, new { @class = "btn btn-default" })
+</p>

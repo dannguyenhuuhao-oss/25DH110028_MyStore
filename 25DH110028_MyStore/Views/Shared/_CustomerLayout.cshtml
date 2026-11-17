@@ -1,0 +1,183 @@
+﻿@{
+    var cart = Session["Cart"] as _25DH110028_MyStore.Models.ViewModel.Cart;
+    int cartCount = cart == null ? 0 : cart.TotalQuantity();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - The Kings Bookshop</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerLayout.css" />
+</head>
+<body>
+
+    @* ============ THANH ĐẦU ============ *@
+    <header class="site-header">
+        <div class="header-inner">
+
+            <a class="site-logo" href="@Url.Action("Index", "Home", new { area = "" })">THE <b>KINGS</b> BOOKSHOP</a>
+
+            @* Ô tìm kiếm *@
+            @using (Html.BeginForm("Index", "Home", new { area = "" }, FormMethod.Get, new { @class = "site-search" }))
+            {
+                <input type="text" name="searchTerm" value="@Request.QueryString["searchTerm"]"
+                       placeholder="Nhập tên, mô tả hoặc loại sản phẩm..." />
+                <button type="submit" title="Tìm kiếm">
+                    <svg width="18" height="18" viewBox="0 0 16 16">
+                        <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="2" />
+                        <line x1="11" y1="11" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </button>
+            }
+
+            @* Hỗ trợ khách hàng *@
+            <div class="header-item">
+                <span class="header-icon">&#9742;</span>
+                <span class="header-text"><strong>0777552467</strong>Hỗ trợ khách hàng</span>
+            </div>
+
+            @* Tài khoản *@
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="header-item">
+                    <a class="header-icon" href="@Url.Content("~/Account/ProfileInfo")" title="Thông tin tài khoản">
+                        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                            <circle cx="8" cy="5" r="3.2" />
+                            <path d="M2 15c0-3.4 2.7-5.5 6-5.5s6 2.1 6 5.5z" />
+                        </svg>
+                    </a>
+                    <span class="header-text">
+                        <strong>
+                            <a href="@Url.Content("~/Account/ProfileInfo")" title="Thông tin tài khoản">@User.Identity.Name</a>
+                        </strong>
+                        <a href="@Url.Action("MyOrder", "Order", new { area = "" })">Lịch sử mua hàng</a> |
+                        <a href="@Url.Content("~/Account/Logout")">Đăng xuất</a>
+                    </span>
+                </div>
+            }
+            else
+            {
+                <div class="header-item">
+                    <span class="header-icon">
+                        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                            <circle cx="8" cy="5" r="3.2" />
+                            <path d="M2 15c0-3.4 2.7-5.5 6-5.5s6 2.1 6 5.5z" />
+                        </svg>
+                    </span>
+                    <span class="header-text">
+                        <strong><a href="@Url.Action("Login", "Account", new { area = "" })">Đăng nhập</a></strong>
+                        <a href="@Url.Action("Register", "Account", new { area = "" })">Đăng ký</a>
+                    </span>
+                </div>
+            }
+
+            @* Giỏ hàng *@
+            <a class="header-item cart-link" href="@Url.Action("Index", "Cart", new { area = "" })" title="Giỏ hàng">
+                <span class="header-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                    </svg>
+                </span>
+                <span class="cart-badge">@cartCount</span>
+            </a>
+        </div>
+    </header>
+
+    @* ============ THANH MENU DANH MỤC ============ *@
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <a href="@Url.Action("Index", "Home", new { area = "" })">Trang chủ</a>
+            @Html.Action("CategoriesPV", "Home", new { area = "" })
+        </div>
+    </nav>
+
+    @* ============ NỘI DUNG ============ *@
+    <main class="site-main">
+        @RenderBody()
+    </main>
+
+    @* ============ CHÂN TRANG ============ *@
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <h4>The Kings Bookshop</h4>
+                <p>Mua sắm trực tuyến với hàng ngàn đầu sách đa dạng và chất lượng.</p>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <p>Adress: 123 Lý Thường Kiệt, Q10, TP.HCM</p>
+                <p>Email: TheKingsBookshop@gmail.com</p>
+                <p>Tel: 0777552467</p>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; @DateTime.Now.Year - The Kings Bookshop</div>
+    </footer>
+
+    @* Cửa sổ thông tin khách hàng (chỉ có khi đã đăng nhập) *@
+    @if (User.Identity.IsAuthenticated)
+    {
+        @Html.Action("CustomerInfoPV", "Account", new { area = "" })
+    }
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script>
+        (function () {
+            var overlay = document.getElementById('customerInfoModal');
+            if (!overlay) return;
+
+            function openBox() { overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); }
+            function closeBox() { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); }
+
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest ? e.target.closest('a[href*="Account/ProfileInfo"]') : null;
+                if (link && !overlay.contains(link)) {
+                    e.preventDefault();
+                    openBox();
+                    return;
+                }
+                if (e.target === overlay || (e.target.closest && e.target.closest('[data-ci-close]'))) {
+                    closeBox();
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeBox();
+            });
+        })();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("customerInfoModal");
+            if (!modal) return;
+
+            const closeButtons = document.querySelectorAll("[data-ci-close]");
+            closeButtons.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    modal.classList.remove("active");
+                    modal.classList.remove("open");
+                });
+            });
+
+            modal.addEventListener("click", function (e) {
+                if (e.target === modal) {
+                    modal.classList.remove("active");
+                    modal.classList.remove("open");
+                }
+            });
+        });
+
+        function openCustomerProfile() {
+            const modal = document.getElementById("customerInfoModal");
+            if (modal) {
+                modal.classList.add("active");
+                modal.classList.add("open");
+            }
+        }
+    </script>
+</body>
+</html>

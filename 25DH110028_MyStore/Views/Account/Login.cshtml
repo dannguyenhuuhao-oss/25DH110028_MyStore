@@ -1,0 +1,37 @@
+﻿@model _25DH110028_MyStore.Models.ViewModel.LoginVM
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerAccount.css" />
+
+<div class="account-card">
+    <h2>Đăng nhập</h2>
+    @if (TempData["RegisterSuccess"] != null)
+    {
+        <div class="account-success">@TempData["RegisterSuccess"]</div>
+    }
+    @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "account-error" })
+
+        <div class="account-field">
+            @Html.LabelFor(m => m.Username)
+            @Html.TextBoxFor(m => m.Username, new { @class = "account-input" })
+            @Html.ValidationMessageFor(m => m.Username, "", new { @class = "account-error" })
+        </div>
+        <div class="account-field">
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password, new { @class = "account-input" })
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "account-error" })
+        </div>
+
+        <input type="submit" value="Đăng nhập" class="account-btn" />
+        <p class="account-link">Bạn chưa có tài khoản? <a href="@Url.Action("Register", "Account")">Đăng ký ngay</a></p>
+    }
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

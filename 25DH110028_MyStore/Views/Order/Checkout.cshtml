@@ -1,0 +1,111 @@
+﻿@model _25DH110028_MyStore.Models.ViewModel.CheckoutVM
+@{
+    ViewBag.Title = "Thanh toán";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerAccount.css" />
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerOrder.css" />
+
+<h2 class="od-title">THANH TOÁN</h2>
+
+@using (Html.BeginForm("Checkout", "Order", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "account-error" })
+
+    <div class="od-grid">
+
+        @* ================= CỘT TRÁI ================= *@
+        <div>
+
+            @* ----- Thông tin đơn hàng ----- *@
+            <div class="od-card">
+                <h3>Thông tin đơn hàng</h3>
+                <table class="od-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Sản phẩm</th>
+                            <th class="od-num">Số lượng</th>
+                            <th class="od-num">Đơn giá</th>
+                            <th class="od-num">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <tr>
+                                <td><img src="@item.ProductImage" alt="@item.ProductName" /></td>
+                                <td>@item.ProductName</td>
+                                <td class="od-num">@item.Quantity</td>
+                                <td class="od-num">@item.UnitPrice.ToString("N0")</td>
+                                <td class="od-num">@item.TotalPrice.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* ----- Giao tới ----- *@
+            <div class="od-card">
+                <h3>Giao tới</h3>
+                <div class="od-address">
+                    @Html.TextBoxFor(m => m.ShippingAddress, new { @class = "account-input", @readonly = "readonly", id = "shippingAddress" })
+                    <button type="button" class="od-link-btn" onclick="enableAddressEdit()">Chỉnh sửa</button>
+                </div>
+                @Html.ValidationMessageFor(m => m.ShippingAddress, "", new { @class = "account-error" })
+            </div>
+
+            @* ----- Hình thức giao hàng ----- *@
+            <div class="od-card">
+                <h3>Chọn hình thức giao hàng</h3>
+                <label class="od-option">
+                    @Html.RadioButtonFor(m => m.ShippingMethod, "Giao hàng nhanh", new { id = "ship1" })
+                    <span>Giao hàng nhanh</span>
+                </label>
+                <label class="od-option">
+                    @Html.RadioButtonFor(m => m.ShippingMethod, "Giao hàng tiết kiệm", new { id = "ship2" })
+                    <span>Giao hàng tiết kiệm</span>
+                </label>
+                @Html.ValidationMessageFor(m => m.ShippingMethod, "", new { @class = "account-error" })
+            </div>
+
+            @* ----- Hình thức thanh toán ----- *@
+            <div class="od-card">
+                <h3>Chọn hình thức thanh toán</h3>
+                <label class="od-option">
+                    @Html.RadioButtonFor(m => m.PaymentMethod, "Tiền mặt", new { id = "pay1" })
+                    <span>Thanh toán tiền mặt khi nhận hàng</span>
+                </label>
+                <label class="od-option">
+                    @Html.RadioButtonFor(m => m.PaymentMethod, "Mua trước trả sau", new { id = "pay2" })
+                    <span>Mua trước trả sau</span>
+                </label>
+                @* Tùy chọn PayPal sẽ được thêm ở phần 5 *@
+                @Html.ValidationMessageFor(m => m.PaymentMethod, "", new { @class = "account-error" })
+            </div>
+        </div>
+
+        @* ================= CỘT PHẢI: ĐƠN HÀNG ================= *@
+        <aside class="od-card od-summary">
+            <h3>Đơn hàng</h3>
+            <div class="od-sum-row"><span>Số sản phẩm</span><span>@Model.CartItems.Sum(i => i.Quantity)</span></div>
+            <div class="od-sum-row"><span>Tạm tính</span><span>@Model.TotalAmount.ToString("N0") ₫</span></div>
+            <div class="od-sum-row"><span>Phí vận chuyển</span><span>Miễn phí</span></div>
+            <div class="od-sum-row total"><span>Tổng tiền</span><span>@Model.TotalAmount.ToString("N0") ₫</span></div>
+            <button type="submit" class="od-btn">Đặt hàng</button>
+            <a class="od-btn" style="background:#EFEAD8; color:#1F3A4D;" href="@Url.Action("Index", "Cart")">Quay lại giỏ hàng</a>
+        </aside>
+    </div>
+}
+
+@section scripts {
+    <script>
+        // Cho phép sửa địa chỉ giao hàng
+        function enableAddressEdit() {
+            var box = document.getElementById("shippingAddress");
+            box.removeAttribute("readonly");
+            box.focus();
+            box.select();
+        }
+    </script>
+}

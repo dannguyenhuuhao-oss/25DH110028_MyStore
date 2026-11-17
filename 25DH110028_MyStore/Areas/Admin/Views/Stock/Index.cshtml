@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = "Quản lý kho hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Quản lý kho hàng</h2>
+
+<h4>Danh sách hàng tồn (số lượng tồn &gt; 0)</h4>
+@Html.Partial("_PVStockList", (IEnumerable<_25DH110028_MyStore.Models.Product>)ViewBag.InStock)
+
+<h4>Danh sách hàng cần nhập (số lượng tồn = 0)</h4>
+@Html.Partial("_PVStockList", (IEnumerable<_25DH110028_MyStore.Models.Product>)ViewBag.NeedRestock)

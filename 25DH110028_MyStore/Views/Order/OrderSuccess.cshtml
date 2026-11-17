@@ -1,0 +1,61 @@
+﻿@model _25DH110028_MyStore.Models.Order
+@{
+    ViewBag.Title = "Xác nhận đơn hàng";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="container" style="margin-top: 20px;">
+    <!-- --- HIỂN THỊ THÔNG BÁO THÀNH CÔNG --- -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade in" role="alert" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="float: right; font-size: 21px; font-weight: bold; line-height: 1; color: #000; text-shadow: 0 1px 0 #fff; opacity: .2; background: transparent; border: 0;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 style="margin-top: 0; font-weight: bold;"><i class="fa fa-check-circle"></i> Đặt hàng thành công!</h4>
+            <p style="margin-bottom: 0;">@TempData["SuccessMessage"]</p>
+        </div>
+    }
+
+    <h2>XÁC NHẬN ĐƠN HÀNG</h2>
+    <hr />
+
+    <!-- Các phần hiển thị chi tiết hóa đơn, sản phẩm có sẵn của bạn bên dưới -->
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p><strong>Mã đơn hàng:</strong> #@Model.OrderID</p>
+            <p><strong>Ngày đặt hàng:</strong> @Model.OrderDate</p>
+            <p><strong>Tổng số tiền:</strong> <span style="color: red; font-weight: bold;">@Model.TotalAmount.ToString("N0") đ</span></p>
+            <p><strong>Phương thức thanh toán:</strong> @Model.PaymentMethod</p>
+            <p><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
+        </div>
+    </div>
+
+    <!-- Bảng chi tiết sản phẩm đơn hàng -->
+    <h3>Chi tiết đơn hàng</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr style="background-color: #f9f9f9;">
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Tổng giá</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@(item.Product != null ? item.Product.ProductName : "Sản phẩm")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice.ToString("N0") đ</td>
+                    <td>@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px;">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Về trang chủ</a>
+    </div>
+</div>

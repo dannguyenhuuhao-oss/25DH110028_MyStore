@@ -1,0 +1,98 @@
+﻿@model IEnumerable<_25DH110028_MyStore.Models.Order>
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+
+    string tab = ViewBag.Tab as string ?? "all";
+    string kw = ViewBag.SearchTerm as string;
+}
+
+<!-- Liên kết tới file CSS của bạn -->
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerOrder.css" />
+
+<h2 class="od-title">ĐƠN HÀNG CỦA TÔI</h2>
+
+@* ----- Các tab trạng thái ----- *@
+<div class="od-tabs">
+    <a class="@(tab == "all" ? "active" : "")" href="@Url.Action("MyOrder", new { tab = "all", searchTerm = kw })">
+        Tất cả đơn <span class="count">(@ViewBag.CountAll)</span>
+    </a>
+    <a class="@(tab == "pending" ? "active" : "")" href="@Url.Action("MyOrder", new { tab = "pending", searchTerm = kw })">
+        Chờ thanh toán <span class="count">(@ViewBag.CountPending)</span>
+    </a>
+    <a class="@(tab == "processing" ? "active" : "")" href="@Url.Action("MyOrder", new { tab = "processing", searchTerm = kw })">
+        Đang xử lý <span class="count">(@ViewBag.CountProcessing)</span>
+    </a>
+    <a class="@(tab == "shipping" ? "active" : "")" href="@Url.Action("MyOrder", new { tab = "shipping", searchTerm = kw })">
+        Đang vận chuyển <span class="count">(@ViewBag.CountShipping)</span>
+    </a>
+    <a class="@(tab == "delivered" ? "active" : "")" href="@Url.Action("MyOrder", new { tab = "delivered", searchTerm = kw })">
+        Đã giao <span class="count">(@ViewBag.CountDelivered)</span>
+    </a>
+    <a class="@(tab == "cancelled" ? "active" : "")" href="@Url.Action("MyOrder", new { tab = "cancelled", searchTerm = kw })">
+        Đã huỷ <span class="count">(@ViewBag.CountCancelled)</span>
+    </a>
+</div>
+
+@* ----- Thanh tìm kiếm ----- *@
+@using (Html.BeginForm("MyOrder", "Order", FormMethod.Get, new { @class = "od-search" }))
+{
+    <input type="hidden" name="tab" value="@tab" />
+    <input type="text" name="searchTerm" value="@kw" placeholder="Tìm đơn hàng theo Mã đơn hàng hoặc Tên sản phẩm" />
+    <button type="submit">Tìm đơn hàng</button>
+}
+
+@* ----- Danh sách đơn hàng ----- *@
+@if (!Model.Any())
+{
+    <div class="od-empty">Không tìm thấy đơn hàng nào phù hợp.</div>
+}
+else
+{
+    foreach (var order in Model)
+    {
+        string status = string.IsNullOrEmpty(order.PaymentStatus) ? "Chờ xử lý" : order.PaymentStatus.Trim();
+        bool isPaidStatus = status.Equals("Đã hoàn thành", StringComparison.OrdinalIgnoreCase) ||
+                            status.Equals("Đã giao", StringComparison.OrdinalIgnoreCase) ||
+                            status.Equals("Thanh toán tiền mặt", StringComparison.OrdinalIgnoreCase) ||
+                            status.Equals("Thanh toán paypal", StringComparison.OrdinalIgnoreCase) ||
+                            status.Equals("Trả góp", StringComparison.OrdinalIgnoreCase);
+
+        var lines = order.OrderDetails.ToList();
+
+        <div class="od-card">
+            <!-- Header đơn hàng -->
+            <div class="od-order-head">
+                <div>
+                    <strong>Đơn hàng #@order.OrderID</strong>
+                    <small> · @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</small>
+                </div>
+                <span class="od-badge @(isPaidStatus ? "paid" : "pending")">@status</span>
+            </div>
+
+            <!-- Danh sách sản phẩm trong đơn -->
+            @foreach (var d in lines)
+            {
+                <div class="od-line">
+                    <img src="@d.Product.ProductImage" alt="@d.Product.ProductName" />
+                    <div class="name">
+                        @d.Product.ProductName
+                        <div class="qty">Số lượng: x@(d.Quantity)</div>
+                    </div>
+                    <div class="od-num" style="font-weight: 700; color: #1F3A4D;">
+                        @d.UnitPrice.ToString("N0") ₫
+                    </div>
+                </div>
+            }
+
+            <!-- Footer đơn hàng -->
+            <div class="od-order-foot">
+                <div class="sum">
+                    Tổng tiền: <b>@order.TotalAmount.ToString("N0") ₫</b>
+                </div>
+                <a class="od-mini" href="@Url.Action("Reorder", "Order", new { id = order.OrderID })">Mua lại</a>
+                <a class="od-mini" href="@Url.Action("OrderSuccess", "Order", new { id = order.OrderID })">Xem chi tiết</a>
+            </div>
+        </div>
+    }
+}

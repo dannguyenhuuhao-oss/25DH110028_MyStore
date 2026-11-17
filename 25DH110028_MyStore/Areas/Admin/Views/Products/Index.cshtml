@@ -1,27 +1,45 @@
-﻿@model IEnumerable<_25DH110028_MyStore.Models.Product>
-
+﻿@model _25DH110028_MyStore.Models.ViewModel.ProductSearchVM
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Quản lý sản phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
+<html>
 <head>
-    <style>
-        img {
-            max-width: 150px;
-            height: 150px;
-        }
-    </style>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Search Products</title>
     <style>
-        .search-container, .order-container {
-            padding-top: 20px;
+        .search-container {
+            padding-top: 15px;
             display: flex;
             justify-content: center;
-            align-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
+        /* Đồng bộ kiểu nút sắp xếp dạng button */
+        .btn-sort {
+            background-color: #EFEAD8;
+            color: #1F3A4D !important;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none !important;
+            border: 1px solid #e3dcc8;
+            transition: all 0.2s ease-in-out;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+            .btn-sort:hover {
+                background-color: #3E8FB0;
+                color: #fff !important;
+                border-color: #3E8FB0;
+                transform: translateY(-1px);
+            }
     </style>
 </head>
+<body>
 
     @using (Html.BeginForm("Index", "Products", FormMethod.Get))
     {
@@ -29,52 +47,41 @@
             @Html.TextBoxFor(m => m.SearchTerm, new
             {
                 @class = "form-control",
-                placeholder = "Nhập tên, mô tả hoặc danh mục sản phẩm"
+                @placeholder = "Nhập tên, mô tả hoặc danh mục sản phẩm",
+                @style = "max-width: 300px;"
             })
 
-<table class="table bg-info container-fluid">
-    <tr>
-        <th class="bg-success col-md-3">
-            Tên sản phẩm
-        </th>
-        <th class="bg-success col-md-2">
-            Hình ảnh
-        </th>
-        <th class="bg-success col-md-1">
-            Đơn giá
-        </th>
-        <th class="bg-success col-md-2">
-            Danh mục
-        </th>
-        <th class="bg-success col-md-4">
-        </th>
-    </tr>
+            @Html.TextBoxFor(m => m.MinPrice, new
+            {
+                @class = "form-control",
+                @placeholder = "Giá tối thiểu",
+                @type = "number",
+                @style = "max-width: 150px;"
+            })
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                <img src="@Html.DisplayFor(modelItem => item.ProductImage)"/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryName)
-            </td>
-            <td>
-                @Html.ActionLink("Sửa", "Edit", new { id = item.ProductID }, new { @class = "btn btn-primary btn-sm" }) |
-                @Html.ActionLink("Chi tiết", "Details", new { id = item.ProductID }, new { @class = "btn btn-primary btn-sm" }) |
-                @Html.ActionLink("Xóa", "Delete", new { id = item.ProductID }, new { @class = "btn btn-primary btn-sm" })
-            </td>
-        </tr>
+            @Html.TextBoxFor(m => m.MaxPrice, new
+            {
+                @class = "form-control",
+                @placeholder = "Giá tối đa",
+                @type = "number",
+                @style = "max-width: 150px;"
+            })
+
+            <button type="submit" class="btn btn-primary" style="background-color: #3E8FB0; border: none;">Tìm kiếm</button>
+        </div>
+
+        <div class="sort-container" style="margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-weight: 600; color: #1F3A4D;">Sắp xếp theo:</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                @Html.ActionLink("Tên tăng dần", "Index", new { sortOrder = "name_asc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice }, new { @class = "btn-sort" })
+                @Html.ActionLink("Tên giảm dần", "Index", new { sortOrder = "name_desc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice }, new { @class = "btn-sort" })
+                @Html.ActionLink("Giá tăng dần", "Index", new { sortOrder = "price_asc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice }, new { @class = "btn-sort" })
+                @Html.ActionLink("Giá giảm dần", "Index", new { sortOrder = "price_desc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice }, new { @class = "btn-sort" })
+            </div>
+        </div>
     }
 
-</table>
+    @Html.Partial("PVListProduct", Model)
 
-<p>
-    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
-</p>
+</body>
+</html>
