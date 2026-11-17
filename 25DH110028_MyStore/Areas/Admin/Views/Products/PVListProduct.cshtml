@@ -33,8 +33,8 @@
                     <td>@Html.DisplayFor(modelItem => product.ProductPrice)</td>
                     <td>@Html.DisplayFor(modelItem => product.Category.CategoryName)</td>
                     <td>
-                        @Html.ActionLink("Sửa", "Edit", new { id = product.ProductID }, new { @class = "btn btn-primary btn-sm" }) |
-                        @Html.ActionLink("Chi tiết", "Details", new { id = product.ProductID }, new { @class = "btn btn-primary btn-sm" }) |
+                        @Html.ActionLink("Sửa", "Edit", new { id = product.ProductID }, new { @class = "btn btn-primary btn-sm" }) 
+                        @Html.ActionLink("Chi tiết", "Details", new { id = product.ProductID }, new { @class = "btn btn-primary btn-sm" }) 
                         @Html.ActionLink("Xóa", "Delete", new { id = product.ProductID }, new { @class = "btn btn-danger btn-sm" })
                     </td>
                 </tr>

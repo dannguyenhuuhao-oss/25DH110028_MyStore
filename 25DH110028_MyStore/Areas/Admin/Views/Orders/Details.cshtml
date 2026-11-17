@@ -3,42 +3,116 @@
 @{
     ViewBag.Title = "Chi tiết Đơn hàng";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    // Đổi giá trị cột ProductImage thành đường dẫn dùng được trong thẻ <img>
+    Func<string, string> imgUrl = path =>
+    {
+        if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/Images/default.png");
+        path = path.Trim();
+        if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return path;   // địa chỉ đầy đủ
+        if (path.StartsWith("~/")) return Url.Content(path);                             // dạng ~/...
+        if (path.StartsWith("/")) return Url.Content("~" + path);                        // dạng /Content/images/...
+        return Url.Content("~/Images/" + path);                                          // chỉ có tên file
+    };
 }
 
-<h2 class="bg-success text-center" style="padding: 10px;">CHI TIẾT ĐƠN HÀNG #@Model.OrderID</h2>
+<style>
+    .ord-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 30px;
+        margin-bottom: 22px;
+        padding: 18px 22px;
+        border: 1px solid #e3dcc8;
+        border-radius: 12px;
+        background: #FAF7EE;
+    }
 
-<div class="panel panel-default">
-    <div class="panel-body">
-        <p><strong>Khách hàng:</strong> @(Model.Customer != null ? Model.Customer.CustomerName : "N/A")</p>
-        <p><strong>Ngày đặt hàng:</strong> @Model.OrderDate</p>
-        <p><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
-        <p><strong>Phương thức thanh toán:</strong> @Model.PaymentMethod</p>
-        <p><strong>Trạng thái:</strong> <span class="label label-info">@Model.PaymentStatus</span></p>
-        <p><strong>Tổng tiền:</strong> <span style="color: red; font-weight: bold;">@Model.TotalAmount.ToString("N0") đ</span></p>
-    </div>
+        .ord-info b {
+            color: #6b7a84;
+            font-weight: 600;
+        }
+
+    .ord-status {
+        display: inline-block;
+        padding: 3px 14px;
+        border-radius: 14px;
+        background: #e8f6fa;
+        color: #3E8FB0;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .ord-total {
+        color: #B5382E;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .ord-num {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .ord-img {
+        width: 60px;
+        height: 78px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+    }
+</style>
+
+<h2>CHI TIẾT ĐƠN HÀNG #@Model.OrderID</h2>
+
+<div class="ord-info">
+    <div><b>Khách hàng:</b> @(Model.Customer != null ? Model.Customer.CustomerName : "N/A")</div>
+    <div><b>Số điện thoại:</b> @(Model.Customer != null ? Model.Customer.CustomerPhone : "")</div>
+    <div><b>Email:</b> @(Model.Customer != null ? Model.Customer.CustomerEmail : "")</div>
+    <div><b>Ngày đặt hàng:</b> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</div>
+    <div><b>Địa chỉ giao hàng:</b> @Model.ShippingAddress</div>
+    <div><b>Phương thức giao hàng:</b> @((Model.DeliveryMethod ?? "").Trim())</div>
+    <div><b>Phương thức thanh toán:</b> @((Model.PaymentMethod ?? "").Trim())</div>
+    <div><b>Trạng thái:</b> <span class="ord-status">@((Model.PaymentStatus ?? "").Trim())</span></div>
+    <div><b>Tổng tiền:</b> <span class="ord-total">@Model.TotalAmount.ToString("N0") đ</span></div>
 </div>
 
 <h3>Danh sách sản phẩm trong đơn</h3>
-<table class="table table-bordered">
+<table class="table">
     <thead>
-        <tr class="bg-success">
+        <tr>
             <th>Sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Đơn giá</th>
-            <th>Thành tiền</th>
+            <th class="ord-num">Số lượng</th>
+            <th class="ord-num">Đơn giá</th>
+            <th class="ord-num">Thành tiền</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var detail in Model.OrderDetails)
         {
             <tr>
-                <td>@(detail.Product != null ? detail.Product.ProductName : "Sản phẩm")</td>
-                <td>@detail.Quantity</td>
-                <td>@detail.UnitPrice.ToString("N0") đ</td>
-                <td>@((detail.Quantity * detail.UnitPrice).ToString("N0")) đ</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img class="ord-img"
+                             src="@imgUrl(detail.Product != null ? detail.Product.ProductImage : null)"
+                             alt="@(detail.Product != null ? detail.Product.ProductName : "Sản phẩm")"
+                             onerror="this.style.visibility='hidden'" />
+                        <span>@(detail.Product != null ? detail.Product.ProductName : "Sản phẩm đã bị xóa")</span>
+                    </div>
+                </td>
+                <td class="ord-num" style="vertical-align: middle;">@detail.Quantity</td>
+                <td class="ord-num" style="vertical-align: middle;">@detail.UnitPrice.ToString("N0") đ</td>
+                <td class="ord-num" style="vertical-align: middle;">@((detail.Quantity * detail.UnitPrice).ToString("N0")) đ</td>
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="ord-num"><strong>Tổng cộng:</strong></td>
+            <td class="ord-num ord-total">@Model.TotalAmount.ToString("N0") đ</td>
+        </tr>
+    </tfoot>
 </table>
 
 <p style="margin-top: 20px;">
