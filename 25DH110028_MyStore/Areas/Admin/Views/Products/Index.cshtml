@@ -23,7 +23,14 @@
     </style>
 </head>
 
-<h2 class="alert alert-success">DANH SÁCH SẢN PHẨM</h2>
+    @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+    {
+        <div class="form-group search-container">
+            @Html.TextBoxFor(m => m.SearchTerm, new
+            {
+                @class = "form-control",
+                placeholder = "Nhập tên, mô tả hoặc danh mục sản phẩm"
+            })
 
 <table class="table bg-info container-fluid">
     <tr>
